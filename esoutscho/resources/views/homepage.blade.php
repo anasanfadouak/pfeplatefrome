@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,8 +76,10 @@
 									<option data-icon="flag flag-us">English US</option>
 								</select>
 							</li>
-							<li><a href="login.html">Login</a></li>
-							<li><a href="{{ route('register-user') }}">Register</a></li>
+							<li><a href="{{ route('login') }}">Login</a></li>
+							<li><a href="{{ route('register') }}">Register</a></li>
+							<li><a href="{{ route('admin.login') }}">admin Login</a></li>
+							<li><a href="{{ route('admin.register') }}"> admin Register</a></li>
 						</ul>
 					</div>
 				</div>

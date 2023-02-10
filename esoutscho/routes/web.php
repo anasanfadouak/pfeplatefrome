@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Cusauthcontr;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,14 +15,36 @@ use App\Http\Controllers\Cusauthcontr;
 | contains the "web" middleware group. Now create something great!
 |
 */
-/*Route::get('/', function()
-{
-    return view ('homepage');
-}); */
-Route::get('/', [Cusauthcontr::class, 'home']);
-Route::get('dashboard', [Cusauthcontr::class, 'dashboard']); 
-Route::get('login', [Cusauthcontr::class, 'index'])->name('login');
-Route::post('postlogin', [Cusauthcontr::class, 'login'])->name('postlogin'); 
-Route::get('signup', [Cusauthcontr::class, 'signup'])->name('register-user');
-Route::post('postsignup', [Cusauthcontr::class, 'signupsave'])->name('postsignup'); 
-Route::get('signout', [Cusauthcontr::class, 'signOut'])->name('signout');
+
+Route::get('/', function () {
+    return view ('homepage', [
+        'canLogin' => Route::has('admin.login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+
+Route::get('/admin/dashboard', function () {
+    return Inertia::render('admin.Dashboard');
+})->middleware(['auth', 'verified'])->name('admin.dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/adminauth.php';
